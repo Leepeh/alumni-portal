@@ -1,0 +1,12 @@
+{% extends base_template %}
+{% block title %}Удаление — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Удаление записи</h1>
+<p>Удалить запись «{{ obj }}»? Это действие нельзя отменить.</p>
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn-danger" type="submit">Удалить</button>
+  <a class="btn btn-outline-secondary" href="{% url crud.namespace|add:':'|add:crud.name|add:'_list' %}">Отмена</a>
+</form>
+{% endblock %}

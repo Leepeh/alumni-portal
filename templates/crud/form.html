@@ -1,0 +1,12 @@
+{% extends base_template %}
+{% block title %}{{ heading }} — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">{{ heading }}</h1>
+<form method="post" enctype="multipart/form-data" novalidate class="col-lg-9 px-0">
+  {% csrf_token %}
+  {% include "includes/form_fields.html" %}
+  <button class="btn btn-accent" type="submit">Сохранить</button>
+  <a class="btn btn-outline-secondary" href="{% url crud.namespace|add:':'|add:crud.name|add:'_list' %}">Отмена</a>
+</form>
+{% endblock %}
