@@ -146,3 +146,34 @@ class PdConsent(models.Model):
     @property
     def is_active(self):
         return self.revoked_at is None
+
+
+class GraduateRecord(models.Model):
+    """Запись реестра выпускников, загруженная из учётной системы университета.
+
+    По реестру модератор проверяет, что автор заявки действительно окончил университет.
+    """
+
+    last_name = models.CharField("Фамилия", max_length=100)
+    first_name = models.CharField("Имя", max_length=100)
+    middle_name = models.CharField("Отчество", max_length=100, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.PROTECT,
+                                verbose_name="Направление подготовки", related_name="graduates")
+    grad_year = models.PositiveSmallIntegerField(
+        "Год выпуска", validators=[MinValueValidator(1990), MaxValueValidator(2100)])
+    imported_at = models.DateTimeField("Дата загрузки", auto_now=True)
+
+    class Meta:
+        db_table = "graduate_records"
+        verbose_name = "Запись реестра выпускников"
+        verbose_name_plural = "Реестр выпускников"
+        ordering = ["last_name", "first_name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["last_name", "first_name", "middle_name", "program", "grad_year"],
+                name="uniq_graduate_record"),
+        ]
+        indexes = [models.Index(fields=["last_name", "grad_year"], name="idx_graduate_search")]
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}, {self.grad_year}"
