@@ -73,3 +73,18 @@ class EventRegistrationTests(TestCase):
     def test_get_request_to_register_is_rejected(self):
         self.login(self.alumnus)
         self.assertEqual(self.client.get(self.register_url).status_code, 405)
+
+    def test_registration_and_cancel_create_notifications(self):
+        self.login(self.alumnus)
+        self.client.post(self.register_url)
+        self.assertEqual(self.alumnus.notifications.count(), 1)
+        self.assertIn(self.event.title, self.alumnus.notifications.first().text)
+        self.client.post(reverse("events:cancel", args=[self.event.pk]))
+        self.assertEqual(self.alumnus.notifications.count(), 2)
+
+    def test_failed_registration_creates_no_notification(self):
+        other = make_alumnus("busy@example.ru", "Занятов", "Олег")
+        EventRegistration.objects.create(event=self.event, profile=other.alumni_profile)
+        self.login(self.alumnus)
+        self.client.post(self.register_url)
+        self.assertEqual(self.alumnus.notifications.count(), 0)

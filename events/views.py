@@ -2,11 +2,12 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from accounts.decorators import role_required
-from accounts.models import Role
+from accounts.models import Role, notify
 from core.breadcrumbs import crumbs
 
 from .models import Event, EventRegistration, EventStatus
@@ -60,6 +61,8 @@ def register_for_event(request, pk):
             messages.error(request, "Свободных мест нет.")
         else:
             EventRegistration.objects.create(event=event, profile=profile)
+            notify(request.user, f"Вы зарегистрированы на мероприятие «{event.title}».",
+                   reverse("events:detail", args=[event.pk]))
             messages.success(request, "Вы зарегистрированы на мероприятие.")
     return redirect("events:detail", pk=pk)
 
@@ -71,5 +74,7 @@ def cancel_registration(request, pk):
     deleted, _ = EventRegistration.objects.filter(
         event_id=pk, profile=request.user.alumni_profile).delete()
     if deleted:
+        notify(request.user, "Регистрация на мероприятие отменена.",
+               reverse("events:detail", args=[pk]))
         messages.success(request, "Регистрация отменена.")
     return redirect("events:detail", pk=pk)
