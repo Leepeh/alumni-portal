@@ -33,7 +33,7 @@ class ModeratorTestCase(TestCase):
 class AccessTests(ModeratorTestCase):
     """Кабинет модератора закрыт для гостей и выпускников."""
 
-    pages = ["moderation:home", "moderation:requests", "moderation:feedback",
+    pages = ["moderation:home", "moderation:requests", "moderation:members", "moderation:feedback",
              "moderation:responses"] + [section.route("list") for section in SECTIONS]
 
     def test_at_least_five_pages_open_for_moderator(self):
@@ -156,3 +156,39 @@ class ContentTests(ModeratorTestCase):
         self.assertTrue(item.is_processed)
         self.assertEqual(item.processed_by, self.moderator)
         self.assertEqual(len(mail.outbox), 1)
+
+
+class MemberListTests(ModeratorTestCase):
+    """Реестр членов клуба в кабинете модератора."""
+
+    def setUp(self):
+        super().setUp()
+        self.first = make_alumnus("ivanov@example.ru", "Иванов", "Пётр")
+        self.second = make_alumnus("smirnova@example.ru", "Смирнова", "Ольга")
+
+    def test_all_members_are_listed(self):
+        response = self.client.get(reverse("moderation:members"))
+        self.assertContains(response, "Иванов Пётр")
+        self.assertContains(response, "Смирнова Ольга")
+
+    def test_search_by_last_name_and_email(self):
+        response = self.client.get(reverse("moderation:members"), {"q": "иванов"})
+        self.assertContains(response, "Иванов Пётр")
+        self.assertNotContains(response, "Смирнова Ольга")
+        response = self.client.get(reverse("moderation:members"), {"q": "smirnova@"})
+        self.assertContains(response, "Смирнова Ольга")
+
+    def test_filter_by_faculty(self):
+        other = Program.objects.exclude(faculty=self.first.alumni_profile.program.faculty).first()
+        profile = self.second.alumni_profile
+        profile.program = other
+        profile.save()
+        response = self.client.get(reverse("moderation:members"), {"faculty": other.faculty_id})
+        self.assertContains(response, "Смирнова Ольга")
+        self.assertNotContains(response, "Иванов Пётр")
+
+    def test_disabled_accounts_are_hidden(self):
+        self.second.is_active = False
+        self.second.save()
+        response = self.client.get(reverse("moderation:members"))
+        self.assertNotContains(response, "Смирнова Ольга")
