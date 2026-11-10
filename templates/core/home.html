@@ -20,35 +20,70 @@
 
 <section class="row g-3 mb-5">
   <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.members }}</div>членов клуба</div></div>
-  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.programs }}</div>направлений подготовки</div></div>
-  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.faculties }}</div>факультета</div></div>
-  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.requests }}</div>заявок на рассмотрении</div></div>
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.events }}</div>мероприятий в этом году</div></div>
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.partners }}</div>организаций-партнёров</div></div>
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.vacancies }}</div>вакансий и стажировок</div></div>
 </section>
 
 <section class="mb-5">
-  <h2 class="h4 mb-3">Что даёт членство в клубе</h2>
+  <div class="d-flex justify-content-between align-items-baseline mb-3">
+    <h2 class="h4 mb-0">Ближайшие мероприятия</h2>
+    <a href="{% url 'events:list' %}">Все мероприятия</a>
+  </div>
   <div class="row g-3">
-    <div class="col-md-4">
-      <div class="card h-100"><div class="card-body">
-        <h3 class="h6">Встречи и мероприятия</h3>
-        <p class="mb-0">Дни карьеры, встречи выпускников разных лет, мастер-классы и экскурсии к работодателям.
-          Запись на мероприятие занимает одну минуту.</p>
-      </div></div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100"><div class="card-body">
-        <h3 class="h6">Карьера и вакансии</h3>
-        <p class="mb-0">Вакансии и стажировки от организаций-партнёров университета. Отклик с резюме отправляется
-          прямо с портала.</p>
-      </div></div>
-    </div>
-    <div class="col-md-4">
-      <div class="card h-100"><div class="card-body">
-        <h3 class="h6">Связь с университетом</h3>
-        <p class="mb-0">Новости клуба, истории выпускников и возможность поделиться опытом со студентами
-          в роли наставника.</p>
-      </div></div>
-    </div>
+    {% for event in upcoming %}
+      <div class="col-md-4">
+        <div class="card h-100"><div class="card-body d-flex flex-column">
+          <span class="badge text-bg-light align-self-start mb-2">{{ event.start_at|date:"d.m.Y, H:i" }}</span>
+          <h3 class="h6">{{ event.title }}</h3>
+          <p class="small text-muted">{{ event.place }}</p>
+          <a class="btn btn-sm btn-accent mt-auto align-self-start" href="{% url 'events:detail' event.pk %}">Записаться</a>
+        </div></div>
+      </div>
+    {% empty %}
+      <p>Расписание мероприятий уточняется.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="mb-5">
+  <div class="d-flex justify-content-between align-items-baseline mb-3">
+    <h2 class="h4 mb-0">Новости клуба</h2>
+    <a href="{% url 'news:list' %}">Все новости</a>
+  </div>
+  <div class="row g-3">
+    {% for item in latest_news %}
+      <div class="col-md-4">
+        <div class="card h-100"><div class="card-body d-flex flex-column">
+          <div class="small text-muted mb-1">{{ item.published_at|date:"d.m.Y" }}</div>
+          <h3 class="h6">{{ item.title }}</h3>
+          <p class="small">{{ item.summary|default:item.body|truncatewords:18 }}</p>
+          <a class="mt-auto" href="{% url 'news:detail' item.pk %}">Читать</a>
+        </div></div>
+      </div>
+    {% empty %}
+      <p>Новостей пока нет.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="mb-4">
+  <div class="d-flex justify-content-between align-items-baseline mb-3">
+    <h2 class="h4 mb-0">Истории выпускников</h2>
+    <a href="{% url 'news:stories' %}">Все истории</a>
+  </div>
+  <div class="row g-3">
+    {% for item in stories %}
+      <div class="col-md-6">
+        <div class="card h-100"><div class="card-body">
+          <h3 class="h6">{{ item.title }}</h3>
+          <p class="small mb-2">{{ item.summary|default:item.body|truncatewords:30 }}</p>
+          <a href="{% url 'news:story_detail' item.pk %}">Читать историю</a>
+        </div></div>
+      </div>
+    {% empty %}
+      <p>Расскажите свою историю — напишите нам через <a href="{% url 'feedback:contacts' %}">форму обратной связи</a>.</p>
+    {% endfor %}
   </div>
 </section>
 {% endblock %}

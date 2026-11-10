@@ -76,3 +76,22 @@ h1, h2, h3 {
     padding: 2rem 1rem;
   }
 }
+
+/* Обложки карточек новостей и миниатюры галереи одной высоты */
+.card-cover {
+  height: 180px;
+  object-fit: cover;
+}
+
+.gallery-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.partner-logo {
+  max-height: 64px;
+  max-width: 180px;
+  object-fit: contain;
+  align-self: flex-start;
+}

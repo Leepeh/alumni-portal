@@ -9,7 +9,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark site-nav">
+<nav class="navbar navbar-expand-xl navbar-dark site-nav">
   <div class="container">
     <a class="navbar-brand fw-bold" href="{% url 'core:home' %}">{{ portal_name }}</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenu"
@@ -35,7 +35,7 @@
           </li>
         {% else %}
           <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Войти</a></li>
-          <li class="nav-item"><a class="btn btn-accent ms-lg-2" href="{% url 'club:join' %}">Вступить в клуб</a></li>
+          <li class="nav-item"><a class="btn btn-accent ms-xl-2" href="{% url 'club:join' %}">Вступить в клуб</a></li>
         {% endif %}
       </ul>
     </div>

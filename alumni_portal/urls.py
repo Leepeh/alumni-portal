@@ -6,6 +6,10 @@ urlpatterns = [
     path("", include("core.urls")),
     path("accounts/", include("accounts.urls")),
     path("club/", include("club.urls")),
+    path("events/", include("events.urls")),
+    path("", include("news.urls")),
+    path("", include("vacancies.urls")),
+    path("", include("feedback.urls")),
 ]
 
 if settings.DEBUG:

@@ -26,6 +26,10 @@ INSTALLED_APPS = [
     "core",
     "accounts",
     "club",
+    "news",
+    "events",
+    "vacancies",
+    "feedback",
 ]
 
 MIDDLEWARE = [
