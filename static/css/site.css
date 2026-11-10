@@ -1,0 +1,78 @@
+/* Фирменные цвета портала */
+:root {
+  --club-blue: #163a70;
+  --club-red: #c8102e;
+  --club-light: #f3f6fb;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  color: #1d2433;
+}
+
+.site-nav {
+  background-color: var(--club-blue);
+}
+
+.site-nav .nav-link.active {
+  border-bottom: 2px solid #fff;
+}
+
+.btn-accent {
+  background-color: var(--club-red);
+  border-color: var(--club-red);
+  color: #fff;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+  background-color: #a50d26;
+  border-color: #a50d26;
+  color: #fff;
+}
+
+.breadcrumb {
+  font-size: 0.9rem;
+}
+
+h1, h2, h3 {
+  color: var(--club-blue);
+}
+
+/* Баннер на главной странице */
+.hero {
+  background: linear-gradient(120deg, var(--club-blue), #24549c);
+  color: #fff;
+  border-radius: 0.75rem;
+  padding: 3rem 2rem;
+}
+
+.hero h1 {
+  color: #fff;
+}
+
+/* Счётчики показателей клуба */
+.counter {
+  background-color: var(--club-light);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.counter .value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--club-blue);
+}
+
+.site-footer {
+  background-color: var(--club-blue);
+  color: #dfe6f2;
+}
+
+/* На узких экранах баннер не должен вызывать горизонтальную прокрутку */
+@media (max-width: 576px) {
+  .hero {
+    padding: 2rem 1rem;
+  }
+}
