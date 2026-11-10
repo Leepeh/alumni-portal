@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.http import FileResponse, Http404
+from django.db import connection
+from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import render
 from django.utils._os import safe_join
 from django.utils import timezone
@@ -79,6 +80,14 @@ def media(request, path):
         return FileResponse(open(safe_join(settings.MEDIA_ROOT, path), "rb"))
     except (OSError, ValueError):
         raise Http404("Файл не найден")
+
+
+def health(request):
+    """Проверка работоспособности: приложение отвечает и база данных доступна."""
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+    return JsonResponse({"status": "ok"})
 
 
 def permission_denied(request, exception=None):
