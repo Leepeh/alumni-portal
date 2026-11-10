@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Документы — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Документы клуба</h1>
+
+<div class="list-group mb-4">
+  <a class="list-group-item list-group-item-action" href="{% url 'core:privacy' %}">
+    <div class="fw-semibold">Политика обработки персональных данных на портале</div>
+    <div class="small text-muted">Какие данные собирает портал, зачем и как отозвать согласие</div>
+  </a>
+  {% for document in documents %}
+    <a class="list-group-item list-group-item-action" href="{{ document.file.url }}" download>
+      <div class="fw-semibold">{{ document.title }}</div>
+      <div class="small text-muted">
+        {{ document.description }}
+        {% if document.size_kb %} · {{ document.size_kb }} КБ{% endif %}
+        · размещён {{ document.uploaded_at|date:"d.m.Y" }}
+      </div>
+    </a>
+  {% endfor %}
+</div>
+
+<p class="small text-muted">Официальные документы университета опубликованы в разделе
+  «Сведения об образовательной организации» на сайте
+  <a href="https://www.muiv.ru/sveden/document/" target="_blank" rel="noopener">muiv.ru</a>.</p>
+{% endblock %}

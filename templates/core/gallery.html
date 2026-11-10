@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Галерея — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Фотогалерея</h1>
+
+<div class="row g-3">
+  {% for photo in page %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <figure class="figure mb-0">
+        <a href="{{ photo.image.url }}" target="_blank" rel="noopener">
+          <img class="figure-img img-fluid rounded gallery-thumb" src="{{ photo.image.url }}" alt="{{ photo.title }}" loading="lazy">
+        </a>
+        <figcaption class="figure-caption">{{ photo.title }}{% if photo.taken_at %}, {{ photo.taken_at|date:"d.m.Y" }}{% endif %}</figcaption>
+      </figure>
+    </div>
+  {% empty %}
+    <p>Фотографии появятся после ближайших мероприятий клуба.</p>
+  {% endfor %}
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}
