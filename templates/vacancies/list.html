@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Вакансии — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <h1 class="h2 mb-0">Вакансии и стажировки</h1>
+  <div class="btn-group" role="group" aria-label="Тип предложения">
+    <a class="btn btn-outline-primary{% if not kind %} active{% endif %}" href="{% url 'vacancies:list' %}">Все</a>
+    <a class="btn btn-outline-primary{% if kind == 'job' %} active{% endif %}" href="?kind=job">Вакансии</a>
+    <a class="btn btn-outline-primary{% if kind == 'internship' %} active{% endif %}" href="?kind=internship">Стажировки</a>
+  </div>
+</div>
+
+<div class="list-group">
+  {% for vacancy in page %}
+    <a class="list-group-item list-group-item-action" href="{% url 'vacancies:detail' vacancy.pk %}">
+      <div class="d-flex flex-column flex-md-row justify-content-between">
+        <div>
+          <h2 class="h5 mb-1">{{ vacancy.title }}</h2>
+          <div class="text-muted">{{ vacancy.partner.name }}</div>
+        </div>
+        <div class="text-md-end mt-2 mt-md-0">
+          {% if vacancy.is_internship %}<span class="badge text-bg-info">Стажировка</span>{% endif %}
+          {% if not vacancy.is_open %}<span class="badge text-bg-secondary">Приём откликов завершён</span>{% endif %}
+          <div class="small">{{ vacancy.salary }}</div>
+          {% if vacancy.closes_at %}<div class="small text-muted">Отклики до {{ vacancy.closes_at|date:"d.m.Y" }}</div>{% endif %}
+        </div>
+      </div>
+    </a>
+  {% empty %}
+    <p>Сейчас открытых предложений нет.</p>
+  {% endfor %}
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}

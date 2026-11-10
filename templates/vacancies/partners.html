@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Партнёры — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-2">Партнёры клуба</h1>
+<p class="mb-4">Организации, которые предлагают выпускникам и студентам вакансии, стажировки и места для практики.</p>
+
+<div class="row g-4">
+  {% for partner in partners %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column">
+          {% if partner.logo %}<img class="partner-logo mb-3" src="{{ partner.logo.url }}" alt="Логотип {{ partner.name }}">{% endif %}
+          <h2 class="h5">{{ partner.name }}</h2>
+          <p>{{ partner.description }}</p>
+          <div class="mt-auto small">
+            Предложений на портале: {{ partner.vacancies.all|length }}
+            {% if partner.site %}<br><a href="{{ partner.site }}" target="_blank" rel="noopener">Сайт организации</a>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>Список партнёров формируется.</p>
+  {% endfor %}
+</div>
+{% endblock %}
