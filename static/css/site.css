@@ -14,6 +14,23 @@ body {
   background-color: var(--club-blue);
 }
 
+/* Десять пунктов меню должны помещаться в одну строку на экране шириной 1200 пикселей */
+.site-nav .nav-link {
+  white-space: nowrap;
+  font-size: 0.92rem;
+}
+
+@media (min-width: 1200px) {
+  .site-nav .navbar-nav .nav-link {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+
+  .site-nav .navbar-brand {
+    font-size: 1.05rem;
+  }
+}
+
 .site-nav .nav-link.active {
   border-bottom: 2px solid #fff;
 }
@@ -135,4 +152,9 @@ a.counter:hover {
 
 .stat-bar {
   background-color: var(--club-blue);
+}
+
+.site-nav .btn {
+  white-space: nowrap;
+  font-size: 0.92rem;
 }
