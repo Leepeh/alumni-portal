@@ -1,9 +1,12 @@
 from django import forms
 from django.utils import timezone
+from PIL import Image
 
 from accounts.models import User
+from core.forms import BootstrapMixin
+from core.validators import validate_image_file
 
-from .models import MembershipRequest, RequestStatus
+from .models import AlumniProfile, MembershipRequest, RequestStatus
 
 
 class JoinForm(forms.ModelForm):
@@ -46,3 +49,30 @@ class JoinForm(forms.ModelForm):
         if year > timezone.now().year:
             raise forms.ValidationError("Год выпуска не может быть позже текущего года.")
         return year
+
+
+class ProfileForm(BootstrapMixin, forms.ModelForm):
+    """Редактирование профиля выпускника в личном кабинете."""
+
+    PHOTO_SIZE = (600, 600)
+
+    class Meta:
+        model = AlumniProfile
+        fields = ["last_name", "first_name", "middle_name", "program", "grad_year",
+                  "workplace", "position", "is_mentor", "photo"]
+
+    def clean_photo(self):
+        photo = self.cleaned_data.get("photo")
+        # Проверяем только вновь загруженный файл
+        if photo and hasattr(photo, "content_type"):
+            validate_image_file(photo)
+        return photo
+
+    def save(self, commit=True):
+        profile = super().save(commit=commit)
+        if commit and "photo" in self.changed_data and profile.photo:
+            # Уменьшаем фотографию, чтобы не хранить и не отдавать лишний объём
+            with Image.open(profile.photo.path) as image:
+                image.thumbnail(self.PHOTO_SIZE)
+                image.save(profile.photo.path)
+        return profile
