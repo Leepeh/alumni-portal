@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Страница не найдена — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-5">404</h1>
+  <p class="lead">Такой страницы нет. Возможно, она была перемещена или удалена.</p>
+  <a class="btn btn-accent" href="{% url 'core:home' %}">На главную</a>
+</div>
+{% endblock %}

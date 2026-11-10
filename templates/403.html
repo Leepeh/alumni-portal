@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Доступ запрещён — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-5">403</h1>
+  <p class="lead">Доступ запрещён. У вашей учётной записи нет прав на эту страницу.</p>
+  <a class="btn btn-accent" href="{% url 'core:home' %}">На главную</a>
+</div>
+{% endblock %}

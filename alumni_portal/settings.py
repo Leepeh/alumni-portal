@@ -30,6 +30,9 @@ INSTALLED_APPS = [
     "events",
     "vacancies",
     "feedback",
+    "moderation",
+    "reports",
+    "panel",
 ]
 
 MIDDLEWARE = [
@@ -99,6 +102,15 @@ MEDIA_ROOT = BASE_DIR / "media"
 MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5 МБ
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Почта: в разработке письма выводятся в консоль, на хостинге задаётся SMTP
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "club@example.ru")
 
 # Сведения для подвала сайта
 PORTAL_AUTHOR = os.environ.get("PORTAL_AUTHOR", "ФИО автора")

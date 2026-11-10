@@ -1,5 +1,9 @@
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.http import FileResponse, Http404
 from django.shortcuts import render
+from django.utils._os import safe_join
 from django.utils import timezone
 
 from club.models import CONSENT_VERSION, AlumniProfile
@@ -59,3 +63,29 @@ def privacy(request):
         "consent_version": CONSENT_VERSION,
         "crumbs": crumbs(("Документы", "core:documents"), "Политика обработки персональных данных"),
     })
+
+
+def media(request, path):
+    """Отдаёт загруженные файлы. Резюме доступны только автору отклика и сотрудникам."""
+    if path.startswith("resumes/"):
+        user = request.user
+        if not user.is_authenticated:
+            raise PermissionDenied
+        is_owner = user.is_alumnus and user.alumni_profile.responses.filter(
+            resume_file=path).exists()
+        if not (user.is_moderator or is_owner):
+            raise PermissionDenied
+    try:
+        return FileResponse(open(safe_join(settings.MEDIA_ROOT, path), "rb"))
+    except (OSError, ValueError):
+        raise Http404("Файл не найден")
+
+
+def permission_denied(request, exception=None):
+    """Страница ошибки 403 с общим оформлением портала."""
+    return render(request, "403.html", {"crumbs": crumbs("Доступ запрещён")}, status=403)
+
+
+def page_not_found(request, exception=None):
+    """Страница ошибки 404 с общим оформлением портала."""
+    return render(request, "404.html", {"crumbs": crumbs("Страница не найдена")}, status=404)
