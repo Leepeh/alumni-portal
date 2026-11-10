@@ -1,0 +1,23 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Обращение № {{ item.pk }} — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Обращение № {{ item.pk }}</h1>
+
+<dl class="row">
+  <dt class="col-sm-3">От кого</dt><dd class="col-sm-9">{{ item.name }}, {{ item.email }}</dd>
+  <dt class="col-sm-3">Дата</dt><dd class="col-sm-9">{{ item.created_at|date:"d.m.Y, H:i" }}</dd>
+  <dt class="col-sm-3">Тема</dt><dd class="col-sm-9">{{ item.topic|default:"Без темы" }}</dd>
+  <dt class="col-sm-3">Сообщение</dt><dd class="col-sm-9">{{ item.message|linebreaksbr }}</dd>
+  {% if item.processed_by %}
+    <dt class="col-sm-3">Ответил</dt><dd class="col-sm-9">{{ item.processed_by.email }}</dd>
+  {% endif %}
+</dl>
+
+<form method="post" novalidate class="col-lg-9 px-0">
+  {% csrf_token %}
+  {% include "includes/form_fields.html" %}
+  <button class="btn btn-accent" type="submit">Сохранить ответ</button>
+  <a class="btn btn-outline-secondary" href="{% url 'moderation:feedback' %}">Назад</a>
+</form>
+{% endblock %}

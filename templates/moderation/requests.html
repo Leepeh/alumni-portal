@@ -1,0 +1,35 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Заявки на вступление — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Заявки на вступление</h1>
+
+<div class="btn-group mb-3" role="group" aria-label="Статус заявки">
+  {% for item in statuses %}
+    <a class="btn btn-outline-primary{% if status == item.code %} active{% endif %}" href="?status={{ item.code }}">{{ item.name }}</a>
+  {% endfor %}
+  <a class="btn btn-outline-primary{% if status == 'all' %} active{% endif %}" href="?status=all">Все</a>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead><tr><th>№</th><th>Заявитель</th><th>Направление, год выпуска</th><th>Подана</th><th>Статус</th><th></th></tr></thead>
+    <tbody>
+      {% for item in page %}
+        <tr>
+          <td>{{ item.pk }}</td>
+          <td>{{ item.last_name }} {{ item.first_name }} {{ item.middle_name }}<br><span class="small text-muted">{{ item.email }}</span></td>
+          <td>{{ item.program }}, {{ item.grad_year }}</td>
+          <td>{{ item.submitted_at|date:"d.m.Y, H:i" }}</td>
+          <td>{{ item.status.name }}</td>
+          <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'moderation:request_detail' item.pk %}">Открыть</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-muted">Заявок с таким статусом нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}

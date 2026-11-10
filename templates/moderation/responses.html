@@ -1,0 +1,27 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Отклики на вакансии — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Отклики на вакансии</h1>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead><tr><th>Дата</th><th>Выпускник</th><th>Вакансия</th><th>Организация</th><th>Резюме</th></tr></thead>
+    <tbody>
+      {% for response in page %}
+        <tr>
+          <td>{{ response.created_at|date:"d.m.Y" }}</td>
+          <td>{{ response.profile.full_name }}<br><span class="small text-muted">{{ response.profile.user.email }}</span></td>
+          <td>{{ response.vacancy.title }}</td>
+          <td>{{ response.vacancy.partner.name }}</td>
+          <td><a href="{{ response.resume_file.url }}" download>Скачать</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">Откликов пока нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}

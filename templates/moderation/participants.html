@@ -1,0 +1,40 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Участники мероприятия — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+  <div>
+    <h1 class="h3 mb-1">Участники мероприятия</h1>
+    <div class="text-muted">{{ event.title }}, {{ event.start_at|date:"d.m.Y, H:i" }}</div>
+  </div>
+  <a class="btn btn-accent" href="{% url 'reports:participants_xlsx' event.pk %}">Выгрузить в .xlsx</a>
+</div>
+
+<p>Зарегистрировано: {{ registrations|length }} из {{ event.capacity }}.</p>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead><tr><th>№</th><th>Выпускник</th><th>Направление</th><th>Год выпуска</th><th>Электронная почта</th><th>Посещение</th></tr></thead>
+    <tbody>
+      {% for registration in registrations %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ registration.profile.full_name }}</td>
+          <td>{{ registration.profile.program.name|default:"—" }}</td>
+          <td>{{ registration.profile.grad_year }}</td>
+          <td>{{ registration.profile.user.email }}</td>
+          <td>
+            <form method="post" action="{% url 'moderation:toggle_attendance' registration.pk %}">{% csrf_token %}
+              <button class="btn btn-sm {% if registration.attended %}btn-success{% else %}btn-outline-secondary{% endif %}" type="submit">
+                {% if registration.attended %}Был(а){% else %}Отметить{% endif %}
+              </button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-muted">На мероприятие пока никто не зарегистрировался.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

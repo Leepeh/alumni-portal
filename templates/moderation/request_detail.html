@@ -1,0 +1,51 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Заявка № {{ item.pk }} — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Заявка № {{ item.pk }}</h1>
+
+<dl class="row">
+  <dt class="col-sm-4">Заявитель</dt><dd class="col-sm-8">{{ item.last_name }} {{ item.first_name }} {{ item.middle_name }}</dd>
+  <dt class="col-sm-4">Электронная почта</dt><dd class="col-sm-8">{{ item.email }}</dd>
+  <dt class="col-sm-4">Факультет</dt><dd class="col-sm-8">{{ item.program.faculty }}</dd>
+  <dt class="col-sm-4">Направление подготовки</dt><dd class="col-sm-8">{{ item.program }}</dd>
+  <dt class="col-sm-4">Год выпуска</dt><dd class="col-sm-8">{{ item.grad_year }}</dd>
+  <dt class="col-sm-4">Дата подачи</dt><dd class="col-sm-8">{{ item.submitted_at|date:"d.m.Y, H:i" }}</dd>
+  <dt class="col-sm-4">Согласие на обработку ПДн</dt><dd class="col-sm-8">дано, версия текста {{ item.consent_version }}</dd>
+  <dt class="col-sm-4">Статус</dt><dd class="col-sm-8">{{ item.status.name }}</dd>
+  {% if item.reviewed_by %}
+    <dt class="col-sm-4">Рассмотрена</dt><dd class="col-sm-8">{{ item.reviewed_at|date:"d.m.Y, H:i" }}, {{ item.reviewed_by.email }}</dd>
+  {% endif %}
+  {% if item.comment %}
+    <dt class="col-sm-4">Комментарий</dt><dd class="col-sm-8">{{ item.comment }}</dd>
+  {% endif %}
+</dl>
+
+{% if registry_record %}
+  <div class="alert alert-success">Найден в реестре выпускников: {{ registry_record.last_name }}
+    {{ registry_record.first_name }} {{ registry_record.middle_name }}, {{ registry_record.program }},
+    выпуск {{ registry_record.grad_year }} года.</div>
+{% else %}
+  <div class="alert alert-warning">В реестре выпускников совпадений по фамилии, имени и году выпуска не найдено.
+    Проверьте сведения об окончании университета вручную.</div>
+{% endif %}
+
+{% if is_pending %}
+  <div class="row g-3">
+    <div class="col-md-5">
+      <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-success w-100" type="submit" name="approve" value="1">Одобрить заявку</button>
+        <div class="form-text">Будут созданы учётная запись и профиль выпускника.</div>
+      </form>
+    </div>
+    <div class="col-md-7">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include "includes/form_fields.html" with form=reject_form %}
+        <button class="btn btn-outline-danger" type="submit" name="reject" value="1">Отклонить заявку</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

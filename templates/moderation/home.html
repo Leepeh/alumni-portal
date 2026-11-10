@@ -1,0 +1,25 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Кабинет модератора — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Кабинет модератора</h1>
+
+<div class="row g-3">
+  <div class="col-sm-6">
+    <a class="counter d-block text-decoration-none" href="{% url 'moderation:requests' %}">
+      <div class="value">{{ pending_requests }}</div>заявок ожидают рассмотрения</a>
+  </div>
+  <div class="col-sm-6">
+    <a class="counter d-block text-decoration-none" href="{% url 'moderation:feedback' %}">
+      <div class="value">{{ new_feedback }}</div>обращений без ответа</a>
+  </div>
+  <div class="col-sm-6">
+    <a class="counter d-block text-decoration-none" href="{% url 'moderation:events_list' %}">
+      <div class="value">{{ upcoming_events }}</div>предстоящих мероприятий</a>
+  </div>
+  <div class="col-sm-6">
+    <a class="counter d-block text-decoration-none" href="{% url 'moderation:responses' %}">
+      <div class="value">{{ responses_week }}</div>откликов на вакансии за неделю</a>
+  </div>
+</div>
+{% endblock %}

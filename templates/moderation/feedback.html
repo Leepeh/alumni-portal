@@ -1,0 +1,33 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Обращения — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Обращения</h1>
+  <div class="btn-group" role="group" aria-label="Фильтр обращений">
+    <a class="btn btn-outline-primary{% if only_new %} active{% endif %}" href="{% url 'moderation:feedback' %}">Без ответа</a>
+    <a class="btn btn-outline-primary{% if not only_new %} active{% endif %}" href="?all=1">Все</a>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead><tr><th>Дата</th><th>От кого</th><th>Тема</th><th>Состояние</th><th></th></tr></thead>
+    <tbody>
+      {% for item in page %}
+        <tr>
+          <td>{{ item.created_at|date:"d.m.Y, H:i" }}</td>
+          <td>{{ item.name }}<br><span class="small text-muted">{{ item.email }}</span></td>
+          <td>{{ item.topic|default:"Без темы" }}</td>
+          <td>{% if item.is_processed %}Обработано{% else %}Новое{% endif %}</td>
+          <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'moderation:feedback_detail' item.pk %}">Открыть</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">Обращений нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}
