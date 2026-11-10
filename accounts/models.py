@@ -72,3 +72,28 @@ class User(AbstractBaseUser):
     @property
     def is_alumnus(self):
         return self.role.code == Role.ALUMNUS
+
+
+class Notification(models.Model):
+    """Уведомление пользователя в личном кабинете."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь",
+                             related_name="notifications")
+    text = models.CharField("Текст", max_length=300)
+    url = models.CharField("Ссылка", max_length=200, blank=True)
+    is_read = models.BooleanField("Прочитано", default=False)
+    created_at = models.DateTimeField("Дата", auto_now_add=True)
+
+    class Meta:
+        db_table = "notifications"
+        verbose_name = "Уведомление"
+        verbose_name_plural = "Уведомления"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.text
+
+
+def notify(user, text, url=""):
+    """Создаёт уведомление для пользователя."""
+    return Notification.objects.create(user=user, text=text, url=url)
