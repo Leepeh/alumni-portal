@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% comment %}
+  Общий каркас закрытых разделов: слева боковое меню по роли пользователя,
+  справа содержимое страницы (блок cabinet).
+{% endcomment %}
+
+{% block content %}
+<div class="row g-4">
+  <aside class="col-lg-3">
+    <button class="btn btn-outline-primary w-100 d-lg-none mb-2" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sideMenu" aria-controls="sideMenu" aria-expanded="false">Меню кабинета</button>
+    <nav class="list-group side-menu collapse d-lg-flex" id="sideMenu" aria-label="Меню кабинета">
+      {% if user.is_alumnus %}
+        {% include "includes/side_link.html" with route="accounts:cabinet" label="Обзор" exact=True %}
+        {% include "includes/side_link.html" with route="accounts:profile" label="Мой профиль" %}
+        {% include "includes/side_link.html" with route="accounts:my_events" label="Мои мероприятия" %}
+        {% include "includes/side_link.html" with route="accounts:my_responses" label="Мои отклики" %}
+        {% include "includes/side_link.html" with route="accounts:consents" label="Согласия на обработку ПДн" %}
+      {% endif %}
+
+      {% if user.is_admin %}
+        <div class="list-group-item side-title">Панель администратора</div>
+        {% include "includes/side_link.html" with route="panel:dashboard" label="Статистика" exact=True %}
+        {% include "includes/side_link.html" with route="panel:users" label="Пользователи" %}
+        {% include "includes/side_link.html" with route="panel:faculties_list" label="Факультеты" %}
+        {% include "includes/side_link.html" with route="panel:programs_list" label="Направления подготовки" %}
+        {% include "includes/side_link.html" with route="panel:import" label="Импорт выпускников" %}
+        {% include "includes/side_link.html" with route="panel:reports" label="Отчёты" %}
+        {% include "includes/side_link.html" with route="panel:log" label="Журнал действий" %}
+      {% endif %}
+
+      {% if user.is_moderator %}
+        <div class="list-group-item side-title">Кабинет модератора</div>
+        {% include "includes/side_link.html" with route="moderation:home" label="Обзор" exact=True %}
+        {% include "includes/side_link.html" with route="moderation:requests" label="Заявки на вступление" %}
+        {% include "includes/side_link.html" with route="moderation:feedback" label="Обращения" %}
+        {% include "includes/side_link.html" with route="moderation:news_list" label="Новости и истории" %}
+        {% include "includes/side_link.html" with route="moderation:events_list" label="Мероприятия" %}
+        {% include "includes/side_link.html" with route="moderation:partners_list" label="Партнёры" %}
+        {% include "includes/side_link.html" with route="moderation:vacancies_list" label="Вакансии" %}
+        {% include "includes/side_link.html" with route="moderation:responses" label="Отклики на вакансии" %}
+        {% include "includes/side_link.html" with route="moderation:gallery_list" label="Галерея" %}
+        {% include "includes/side_link.html" with route="moderation:documents_list" label="Документы" %}
+      {% endif %}
+
+      <div class="list-group-item side-title">Учётная запись</div>
+      {% include "includes/side_link.html" with route="accounts:notifications" label="Уведомления" %}
+      {% include "includes/side_link.html" with route="accounts:password" label="Смена пароля" %}
+    </nav>
+  </aside>
+
+  <section class="col-lg-9">
+    {% block cabinet %}{% endblock %}
+  </section>
+</div>
+{% endblock %}
