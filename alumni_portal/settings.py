@@ -117,6 +117,15 @@ PORTAL_AUTHOR = os.environ.get("PORTAL_AUTHOR", "ФИО автора")
 PORTAL_NAME = "Клуб выпускников МУИВ"
 
 if not DEBUG:
+    # На хостинге трафик приходит через обратный прокси по HTTPS
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "1") == "1"
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    # Статические файлы раздаёт whitenoise: сжатие и имена с хэшем содержимого
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    }

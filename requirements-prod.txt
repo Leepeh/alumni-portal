@@ -1,0 +1,5 @@
+# Библиотеки для размещения на сервере: всё из requirements.txt,
+# веб-сервер приложений и драйвер PostgreSQL
+-r requirements.txt
+gunicorn==23.0.0
+psycopg[binary]==3.2.3
