@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Вступить в клуб — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="h2 mb-3">Заявка на вступление в клуб</h1>
+    <p>Заполните форму. Сотрудник Центра карьеры проверит сведения и откроет доступ в личный кабинет.</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">{{ error }}</div>
+      {% endfor %}
+
+      <div class="row g-3">
+        {% for field in form %}
+          {% if field.name != "consent" %}
+            <div class="{% if field.name == 'program' or field.name == 'email' %}col-md-12{% else %}col-md-4{% endif %}">
+              <label class="form-label" for="{{ field.id_for_label }}">
+                {{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}
+              </label>
+              {{ field }}
+              {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="form-check mt-4">
+        {{ form.consent }}
+        <label class="form-check-label" for="{{ form.consent.id_for_label }}">
+          {{ form.consent.label }} (версия согласия {{ consent_version }}).
+          Данные используются только для ведения реестра членов клуба и связи с вами.
+        </label>
+        {% for error in form.consent.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+
+      <button class="btn btn-accent mt-4" type="submit">Отправить заявку</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

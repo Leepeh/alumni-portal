@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Заявка отправлена — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="h2">Спасибо, заявка принята</h1>
+  <p class="lead">Мы рассмотрим её в течение одного-двух рабочих дней.</p>
+  <a class="btn btn-accent" href="{% url 'core:home' %}">На главную</a>
+</div>
+{% endblock %}
