@@ -50,3 +50,13 @@ class NewsTests(TestCase):
     def test_search_escapes_script_in_query(self):
         response = self.client.get(reverse("news:list"), {"q": "<script>alert(1)</script>"})
         self.assertNotContains(response, "<script>alert(1)</script>")
+
+    def test_search_ignores_case_of_russian_letters(self):
+        for query in ("день карьеры", "ДЕНЬ КАРЬЕРЫ", "Карьеры"):
+            with self.subTest(query=query):
+                response = self.client.get(reverse("news:list"), {"q": query})
+                self.assertContains(response, self.published.title)
+
+    def test_percent_sign_in_search_is_not_a_wildcard(self):
+        response = self.client.get(reverse("news:list"), {"q": "%"})
+        self.assertNotContains(response, self.published.title)
