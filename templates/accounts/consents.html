@@ -1,0 +1,36 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Согласия на обработку ПДн — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Согласия на обработку персональных данных</h1>
+
+<div class="table-responsive mb-4">
+  <table class="table align-middle">
+    <thead><tr><th>Версия текста</th><th>Дата предоставления</th><th>Состояние</th></tr></thead>
+    <tbody>
+      {% for consent in consents %}
+        <tr>
+          <td><a href="{% url 'core:privacy' %}">Версия {{ consent.version }}</a></td>
+          <td>{{ consent.given_at|date:"d.m.Y, H:i" }}</td>
+          <td>{% if consent.is_active %}Действует{% else %}Отозвано {{ consent.revoked_at|date:"d.m.Y" }}{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="text-muted">Сведений о согласиях нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card border-danger">
+  <div class="card-body">
+    <h2 class="h5">Отзыв согласия</h2>
+    <p>После отзыва согласия учётная запись отключается, а профиль скрывается из реестра клуба.
+      Чтобы вернуться в клуб, потребуется подать новую заявку.</p>
+    <form method="post" action="{% url 'accounts:consent_revoke' %}"
+          onsubmit="return confirm('Отозвать согласие и отключить учётную запись?');">
+      {% csrf_token %}
+      <button class="btn btn-outline-danger" type="submit">Отозвать согласие</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,7 +1,35 @@
-{% extends "base.html" %}
+{% extends "layouts/cabinet.html" %}
 {% block title %}Личный кабинет — {{ portal_name }}{% endblock %}
 
-{% block content %}
-<h1 class="h2 mb-3">Личный кабинет</h1>
-<p>Вы вошли как <strong>{{ user.email }}</strong>. Роль: {{ user.role.name }}.</p>
+{% block cabinet %}
+<h1 class="h3 mb-3">Здравствуйте, {{ profile.first_name }}!</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-4"><div class="counter"><div class="value">{{ upcoming|length }}</div>ближайших мероприятий</div></div>
+  <div class="col-sm-4"><div class="counter"><div class="value">{{ responses_count }}</div>откликов на вакансии</div></div>
+  <div class="col-sm-4"><div class="counter"><div class="value">{{ unread_count }}</div>новых уведомлений</div></div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h2 class="h5">Мои данные</h2>
+    <p class="mb-1">{{ profile.full_name }}</p>
+    <p class="mb-1 text-muted">{{ profile.program|default:"Направление не указано" }}, выпуск {{ profile.grad_year }} года</p>
+    <p class="mb-3 text-muted">{{ profile.workplace|default:"Место работы не указано" }}</p>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'accounts:profile' %}">Изменить профиль</a>
+  </div>
+</div>
+
+<h2 class="h5">Ближайшие мероприятия</h2>
+<ul class="list-group">
+  {% for registration in upcoming %}
+    <li class="list-group-item d-flex justify-content-between">
+      <a href="{% url 'events:detail' registration.event.pk %}">{{ registration.event.title }}</a>
+      <span class="text-muted">{{ registration.event.start_at|date:"d.m.Y, H:i" }}</span>
+    </li>
+  {% empty %}
+    <li class="list-group-item">Вы пока не записаны на мероприятия.
+      <a href="{% url 'events:list' %}">Посмотреть афишу</a></li>
+  {% endfor %}
+</ul>
 {% endblock %}

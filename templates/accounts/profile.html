@@ -1,0 +1,25 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Мой профиль — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Мой профиль</h1>
+
+<div class="row g-4">
+  <div class="col-md-4 order-md-2 text-center">
+    {% if profile.photo %}
+      <img class="img-fluid rounded profile-photo" src="{{ profile.photo.url }}" alt="Фотография профиля">
+    {% else %}
+      <div class="profile-photo profile-photo-empty rounded mx-auto">Фото не загружено</div>
+    {% endif %}
+    <p class="small text-muted mt-2">Электронная почта (логин): {{ user.email }}</p>
+  </div>
+
+  <div class="col-md-8 order-md-1">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <button class="btn btn-accent" type="submit">Сохранить</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

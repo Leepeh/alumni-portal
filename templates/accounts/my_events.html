@@ -1,0 +1,47 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Мои мероприятия — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Мои мероприятия</h1>
+
+<h2 class="h5">Предстоящие</h2>
+<div class="table-responsive mb-4">
+  <table class="table align-middle">
+    <thead><tr><th>Мероприятие</th><th>Дата и время</th><th>Место</th><th></th></tr></thead>
+    <tbody>
+      {% for registration in upcoming %}
+        <tr>
+          <td><a href="{% url 'events:detail' registration.event.pk %}">{{ registration.event.title }}</a></td>
+          <td>{{ registration.event.start_at|date:"d.m.Y, H:i" }}</td>
+          <td>{{ registration.event.place }}</td>
+          <td class="text-end">
+            <form method="post" action="{% url 'events:cancel' registration.event.pk %}">{% csrf_token %}
+              <button class="btn btn-sm btn-outline-secondary" type="submit">Отменить</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="text-muted">Записей нет. <a href="{% url 'events:list' %}">Открыть афишу</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2 class="h5">Прошедшие</h2>
+<div class="table-responsive">
+  <table class="table align-middle">
+    <thead><tr><th>Мероприятие</th><th>Дата</th><th>Посещение</th></tr></thead>
+    <tbody>
+      {% for registration in past %}
+        <tr>
+          <td>{{ registration.event.title }}</td>
+          <td>{{ registration.event.start_at|date:"d.m.Y" }}</td>
+          <td>{% if registration.attended %}Посетил(а){% else %}Нет отметки{% endif %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="text-muted">Прошедших мероприятий нет.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

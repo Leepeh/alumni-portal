@@ -1,0 +1,24 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Мои отклики — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Мои отклики на вакансии</h1>
+
+<div class="table-responsive">
+  <table class="table align-middle">
+    <thead><tr><th>Вакансия</th><th>Организация</th><th>Дата отклика</th><th>Резюме</th></tr></thead>
+    <tbody>
+      {% for response in responses %}
+        <tr>
+          <td><a href="{% url 'vacancies:detail' response.vacancy.pk %}">{{ response.vacancy.title }}</a></td>
+          <td>{{ response.vacancy.partner.name }}</td>
+          <td>{{ response.created_at|date:"d.m.Y" }}</td>
+          <td><a href="{{ response.resume_file.url }}" download>Скачать</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="text-muted">Откликов пока нет. <a href="{% url 'vacancies:list' %}">Посмотреть вакансии</a></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
