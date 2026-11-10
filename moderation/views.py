@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -11,7 +12,7 @@ from django.views.decorators.http import require_POST
 from accounts.decorators import role_required
 from accounts.models import Role
 from club import services
-from club.models import MembershipRequest, RequestStatus
+from club.models import AlumniProfile, Faculty, MembershipRequest, RequestStatus
 from core.audit import log_action
 from core.breadcrumbs import crumbs
 from events.models import Event, EventRegistration
@@ -83,6 +84,26 @@ def request_detail(request, pk):
         "reject_form": reject_form,
         "crumbs": crumbs(HOME, ("Заявки на вступление", "moderation:requests"),
                          f"Заявка № {membership_request.pk}"),
+    })
+
+
+@role_required(*STAFF)
+def member_list(request):
+    """Реестр действующих членов клуба с поиском по фамилии, почте и факультету."""
+    query = request.GET.get("q", "").strip()
+    faculty_id = request.GET.get("faculty", "")
+    members = AlumniProfile.objects.filter(user__is_active=True).select_related(
+        "user", "program__faculty")
+    if query:
+        members = members.filter(Q(last_name__icontains=query) | Q(user__email__icontains=query))
+    if faculty_id.isdigit():
+        members = members.filter(program__faculty_id=int(faculty_id))
+    return render(request, "moderation/members.html", {
+        "page": Paginator(members, 20).get_page(request.GET.get("page")),
+        "query": query,
+        "faculty_id": int(faculty_id) if faculty_id.isdigit() else None,
+        "faculties": Faculty.objects.all(),
+        "crumbs": crumbs(HOME, "Члены клуба"),
     })
 
 
