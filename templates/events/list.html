@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Мероприятия — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <h1 class="h2 mb-0">Мероприятия клуба</h1>
+  <div class="btn-group" role="group" aria-label="Период">
+    <a class="btn btn-outline-primary{% if not show_past %} active{% endif %}" href="{% url 'events:list' %}">Предстоящие</a>
+    <a class="btn btn-outline-primary{% if show_past %} active{% endif %}" href="{% url 'events:list' %}?past=1">Прошедшие</a>
+  </div>
+</div>
+
+<div class="row g-4">
+  {% for event in page %}
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge text-bg-light">{{ event.start_at|date:"d.m.Y, H:i" }}</span>
+            <span class="badge {% if event.is_registration_open %}text-bg-success{% else %}text-bg-secondary{% endif %}">{{ event.status.name }}</span>
+          </div>
+          <h2 class="h5">{{ event.title }}</h2>
+          <p class="text-muted small mb-2">{{ event.place }}</p>
+          <p>{{ event.description|truncatewords:25 }}</p>
+          <div class="mt-auto d-flex justify-content-between align-items-center">
+            <span class="small">Свободно мест: {{ event.free_places }} из {{ event.capacity }}</span>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'events:detail' event.pk %}">Подробнее</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>{% if show_past %}Прошедших мероприятий пока нет.{% else %}Ближайших мероприятий пока нет. Следите за новостями клуба.{% endif %}</p>
+  {% endfor %}
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}

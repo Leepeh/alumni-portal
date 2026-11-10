@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <h1 class="h2 mb-3">{{ event.title }}</h1>
+    {{ event.description|linebreaks }}
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <p class="mb-1"><strong>Когда:</strong> {{ event.start_at|date:"d.m.Y, H:i" }}</p>
+        <p class="mb-1"><strong>Где:</strong> {{ event.place|default:"уточняется" }}</p>
+        <p class="mb-1"><strong>Статус:</strong> {{ event.status.name }}</p>
+        <p class="mb-3"><strong>Свободно мест:</strong> {{ event.free_places }} из {{ event.capacity }}</p>
+
+        {% if is_registered %}
+          <div class="alert alert-success py-2">Вы зарегистрированы.</div>
+          <form method="post" action="{% url 'events:cancel' event.pk %}">{% csrf_token %}
+            <button class="btn btn-outline-secondary w-100" type="submit">Отменить регистрацию</button>
+          </form>
+        {% elif not event.is_registration_open %}
+          <div class="alert alert-secondary py-2 mb-0">Регистрация закрыта.</div>
+        {% elif not user.is_authenticated %}
+          <a class="btn btn-accent w-100" href="{% url 'accounts:login' %}?next={{ request.path }}">Войти, чтобы зарегистрироваться</a>
+        {% elif not user.is_alumnus %}
+          <div class="alert alert-secondary py-2 mb-0">Регистрация доступна членам клуба.</div>
+        {% elif event.free_places == 0 %}
+          <div class="alert alert-warning py-2 mb-0">Свободных мест нет.</div>
+        {% else %}
+          <form method="post" action="{% url 'events:register' event.pk %}">{% csrf_token %}
+            <button class="btn btn-accent w-100" type="submit">Зарегистрироваться</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
