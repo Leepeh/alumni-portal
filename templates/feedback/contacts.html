@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Контакты — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Контакты</h1>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card h-100">
+      <div class="card-body">
+        <h2 class="h5">Центр карьеры, практики и трудоустройства</h2>
+        <p class="mb-1">г. Москва, 2-й Кожуховский проезд, д. 12, стр. 1</p>
+        <p class="mb-1">Главный корпус, 1 этаж, кабинет № 111</p>
+        <p class="mb-1">Пн–чт: 09:00–17:00, пт: 09:00–16:00</p>
+        <p class="mb-3">Тел.: +7 (495) 783-68-48, доб. 5119</p>
+        <p class="mb-0">Вопросы о вступлении в клуб, мероприятиях и вакансиях удобнее задать через форму.
+          Ответ придёт на электронную почту в течение одного рабочего дня.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <h2 class="h5">Форма обратной связи</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        {% if field.name == "consent" %}
+          <div class="form-check mb-3">
+            {{ field }}
+            <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}.
+              <a href="{% url 'core:privacy' %}">Политика обработки персональных данных</a></label>
+            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+          </div>
+        {% else %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">
+              {{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}
+            </label>
+            {{ field }}
+            {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <button class="btn btn-accent" type="submit">Отправить сообщение</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
