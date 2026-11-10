@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }} — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <h1 class="h2 mb-0">{{ heading }}</h1>
+  {% if show_search %}
+    <form class="d-flex" method="get" role="search">
+      <input class="form-control me-2" type="search" name="q" value="{{ query }}" placeholder="Поиск по новостям"
+             aria-label="Поиск по новостям">
+      <button class="btn btn-outline-primary" type="submit">Найти</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if query %}
+  <p class="text-muted">Результаты поиска по запросу «{{ query }}»: {{ page.paginator.count }}.</p>
+{% endif %}
+
+<div class="row g-4">
+  {% for item in page %}
+    <div class="col-md-6 col-lg-4">
+      <article class="card h-100">
+        {% if item.image %}<img class="card-img-top card-cover" src="{{ item.image.url }}" alt="">{% endif %}
+        <div class="card-body d-flex flex-column">
+          <div class="small text-muted mb-1">{{ item.published_at|date:"d.m.Y" }}</div>
+          <h2 class="h5 card-title">{{ item.title }}</h2>
+          <p class="card-text">{{ item.summary|default:item.body|truncatewords:25 }}</p>
+          <a class="btn btn-sm btn-outline-primary mt-auto align-self-start" href="{% url detail_route item.pk %}">Читать полностью</a>
+        </div>
+      </article>
+    </div>
+  {% empty %}
+    <p>По вашему запросу публикаций не найдено.</p>
+  {% endfor %}
+</div>
+
+{% include "includes/pagination.html" %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ item.title }} — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<article class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="small text-muted mb-2">{{ item.category.name }} · {{ item.published_at|date:"d.m.Y" }}</div>
+    <h1 class="h2 mb-3">{{ item.title }}</h1>
+    {% if item.image %}<img class="img-fluid rounded mb-4" src="{{ item.image.url }}" alt="">{% endif %}
+    {{ item.body|linebreaks }}
+  </div>
+</article>
+{% endblock %}

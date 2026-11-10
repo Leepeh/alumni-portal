@@ -1,0 +1,13 @@
+{% if page.has_other_pages %}
+<nav aria-label="Страницы" class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if page.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}">Назад</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">Страница {{ page.number }} из {{ page.paginator.num_pages }}</span></li>
+    {% if page.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}{% if query %}&q={{ query|urlencode }}{% endif %}">Вперёд</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
