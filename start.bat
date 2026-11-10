@@ -12,6 +12,11 @@ if errorlevel 1 (
     exit /b 1
 )
 
+rem Окружение, скопированное с другого компьютера, не работает: создаём заново
+if exist ".venv\Scripts\python.exe" (
+    ".venv\Scripts\python.exe" -c "import sys" >nul 2>nul
+    if errorlevel 1 rmdir /s /q .venv
+)
 if not exist ".venv\Scripts\python.exe" (
     echo Создаю виртуальное окружение...
     python -m venv .venv
