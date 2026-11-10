@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Главная — {{ portal_name }}{% endblock %}
+
+{% block content %}
+<section class="hero mb-4">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+      <h1 class="display-6 fw-bold">Клуб выпускников Московского университета имени С.Ю. Витте</h1>
+      <p class="lead mb-4">Оставайтесь на связи с университетом и однокурсниками: мероприятия, вакансии партнёров,
+        истории выпускников и возможность стать наставником для студентов.</p>
+      {% if user.is_authenticated %}
+        <a class="btn btn-light btn-lg" href="{% url 'accounts:cabinet' %}">Перейти в личный кабинет</a>
+      {% else %}
+        <a class="btn btn-accent btn-lg" href="{% url 'club:join' %}">Вступить в клуб</a>
+        <a class="btn btn-outline-light btn-lg ms-2" href="{% url 'core:about' %}">Узнать о клубе</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="row g-3 mb-5">
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.members }}</div>членов клуба</div></div>
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.programs }}</div>направлений подготовки</div></div>
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.faculties }}</div>факультета</div></div>
+  <div class="col-6 col-md-3"><div class="counter"><div class="value">{{ stats.requests }}</div>заявок на рассмотрении</div></div>
+</section>
+
+<section class="mb-5">
+  <h2 class="h4 mb-3">Что даёт членство в клубе</h2>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card h-100"><div class="card-body">
+        <h3 class="h6">Встречи и мероприятия</h3>
+        <p class="mb-0">Дни карьеры, встречи выпускников разных лет, мастер-классы и экскурсии к работодателям.
+          Запись на мероприятие занимает одну минуту.</p>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100"><div class="card-body">
+        <h3 class="h6">Карьера и вакансии</h3>
+        <p class="mb-0">Вакансии и стажировки от организаций-партнёров университета. Отклик с резюме отправляется
+          прямо с портала.</p>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100"><div class="card-body">
+        <h3 class="h6">Связь с университетом</h3>
+        <p class="mb-0">Новости клуба, истории выпускников и возможность поделиться опытом со студентами
+          в роли наставника.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
