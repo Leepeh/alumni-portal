@@ -1,0 +1,41 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Импорт выпускников — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Импорт реестра выпускников</h1>
+
+<p>Реестр загружается из файла .xlsx, выгруженного из учётной системы университета. По реестру модератор
+  проверяет, что автор заявки на вступление окончил университет. Сейчас в реестре записей: {{ registry_count }}.</p>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h2 class="h6">Требования к файлу</h2>
+    <ul class="mb-2">
+      <li>первая строка содержит заголовки: {{ columns|join:", " }};</li>
+      <li>код направления должен быть в справочнике направлений подготовки;</li>
+      <li>не более 2000 строк и 5 МБ в одном файле;</li>
+      <li>если в файле есть ошибки, не загружается ни одна строка.</li>
+    </ul>
+    <a href="{% url 'panel:import_template' %}">Скачать шаблон файла</a>
+  </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" novalidate class="col-lg-7 px-0">
+  {% csrf_token %}
+  {% include "includes/form_fields.html" %}
+  <button class="btn btn-accent" type="submit">Загрузить</button>
+</form>
+
+{% if result %}
+  <h2 class="h5 mt-4">Протокол импорта</h2>
+  {% if result.ok %}
+    <div class="alert alert-success">Импорт выполнен. Добавлено записей: {{ result.created }},
+      обновлено: {{ result.updated }}.</div>
+  {% else %}
+    <div class="alert alert-danger">Импорт отменён, данные не изменены. Исправьте ошибки и загрузите файл снова.</div>
+    <ul>
+      {% for error in result.errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+{% endif %}
+{% endblock %}

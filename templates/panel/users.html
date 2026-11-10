@@ -1,0 +1,52 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Пользователи — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+  <h1 class="h3 mb-0">Пользователи</h1>
+  <form class="d-flex" method="get" role="search">
+    <input class="form-control me-2" type="search" name="q" value="{{ query }}" placeholder="Почта или фамилия" aria-label="Поиск пользователя">
+    <button class="btn btn-outline-primary" type="submit">Найти</button>
+  </form>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead><tr><th>Электронная почта</th><th>Роль</th><th>Активна</th><th>Зарегистрирован</th><th></th></tr></thead>
+    <tbody>
+      {% for account in page %}
+        <tr>
+          <td>{{ account.email }}</td>
+          <td>{{ account.role.name }}</td>
+          <td>{% if account.is_active %}Да{% else %}Нет{% endif %}</td>
+          <td>{{ account.created_at|date:"d.m.Y" }}</td>
+          <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'panel:user_edit' account.pk %}">Изменить</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">Пользователи не найдены.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include "includes/pagination.html" %}
+
+<div class="card mt-4">
+  <div class="card-body">
+    <h2 class="h5">Добавить сотрудника</h2>
+    <p class="small text-muted">Учётные записи выпускников создаются при одобрении заявки на вступление.
+      Здесь добавляются модераторы и администраторы.</p>
+    <form method="post" novalidate class="row g-3 align-items-end">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="col-md-5">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="col-md-2"><button class="btn btn-accent w-100" type="submit">Создать</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

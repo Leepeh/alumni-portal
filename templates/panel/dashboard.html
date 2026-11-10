@@ -1,0 +1,51 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Статистика — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Статистика клуба</h1>
+
+<div class="row g-3 mb-4">
+  {% for label, value in totals %}
+    <div class="col-6 col-md-4"><div class="counter"><div class="value">{{ value }}</div>{{ label }}</div></div>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <h2 class="h5">Члены клуба по факультетам</h2>
+    {% for name, total, percent in faculties %}
+      <div class="mb-2">
+        <div class="d-flex justify-content-between small"><span>{{ name }}</span><span>{{ total }}</span></div>
+        <div class="progress" role="progressbar" aria-label="{{ name }}" aria-valuenow="{{ total }}" aria-valuemin="0">
+          <div class="progress-bar stat-bar" style="width: {{ percent }}%"></div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Данных пока нет.</p>
+    {% endfor %}
+  </div>
+
+  <div class="col-md-6">
+    <h2 class="h5">Члены клуба по годам выпуска</h2>
+    {% for year, total, percent in years %}
+      <div class="mb-2">
+        <div class="d-flex justify-content-between small"><span>{{ year }}</span><span>{{ total }}</span></div>
+        <div class="progress" role="progressbar" aria-label="{{ year }}" aria-valuenow="{{ total }}" aria-valuemin="0">
+          <div class="progress-bar stat-bar" style="width: {{ percent }}%"></div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Данных пока нет.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<h2 class="h5 mt-4">Заявки на вступление по статусам</h2>
+<table class="table w-auto">
+  <tbody>
+    {% for name, total in requests %}
+      <tr><td>{{ name }}</td><td class="text-end fw-semibold">{{ total }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

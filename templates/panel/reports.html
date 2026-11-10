@@ -1,0 +1,35 @@
+{% extends "layouts/cabinet.html" %}
+{% block title %}Отчёты — {{ portal_name }}{% endblock %}
+
+{% block cabinet %}
+<h1 class="h3 mb-3">Отчёты</h1>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <h2 class="h5">Отчёт о деятельности клуба (.docx)</h2>
+    <p>Документ Word с показателями за период: заявки, мероприятия и посещаемость, публикации, вакансии,
+      обращения, состав клуба по факультетам.</p>
+    <form method="post" novalidate class="row g-3 align-items-end">
+      {% csrf_token %}
+      {% for error in form.non_field_errors %}<div class="col-12 text-danger">{{ error }}</div>{% endfor %}
+      {% for field in form %}
+        <div class="col-md-4">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <div class="col-md-4"><button class="btn btn-accent w-100" type="submit">Сформировать отчёт</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="h5">Реестр членов клуба (.xlsx)</h2>
+    <p>Книга Excel со списком действующих членов клуба: ФИО, факультет, направление, год выпуска,
+      место работы, электронная почта.</p>
+    <a class="btn btn-outline-primary" href="{% url 'reports:members_xlsx' %}">Выгрузить реестр</a>
+  </div>
+</div>
+{% endblock %}
